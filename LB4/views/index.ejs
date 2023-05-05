@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+        <title>Твої справи</title>
+    </head>
+
+    <body>
+        <nav class = "navbar sticky-top navbar-light bg-info bg-opacity-100">
+            <div class="container-fluid justify-content-center">
+                <div class="navbar-brand text-dark">Дії зі справами:</div>
+
+        <form class="d-flex w-auto input-group" action="/search" method="post">
+        <div class="d-flex"><input class="form-control" type="date" id="dateFrom" name="dateFrom"></div> 
+        <div class><button class="btn btn-outline-dark ms-2" type="submit">Знaйти</button></div> 
+        </form>
+
+        <div class="d-flex">
+            <button data-bs-toggle="modal" data-bs-target="#createModal" class="btn btn-outline-dark ms-2">Створити нову справу</button>
+            </div>
+
+        <div class="d-flex">
+            <form action="/" method="post" class="me-2">
+            <input type="hidden" name="all" value="true">
+            <button class="btn btn-outline-dark ms-2" type="submit">Усі справи</button>
+            </form>
+
+            <form action="done" method="post" class="me-2">
+            <input type="hidden" name="done" value="false">
+            <button class="btn btn-success ms-2" type="submit">Виконані</button>
+            </form>
+
+            <form action="no_done" method="post" class="me-2">
+            <input type="hidden" name="no_done" value="false">
+            <button class="btn btn-warning ms-2" type="submit">Тривають</button> 
+            </form>
+
+            <form action="basket" method="post" class="me-2">
+            <input type="hidden" name="basket" value="false">
+            <button class="btn btn-danger ms-2" type="submit" >Видалені</button> 
+            </form>
+        </div>
+
+        </div>
+        </nav>
+
+        <div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 
+            <div class="modal-dialog">
+            <form action="create" method="post" class="card text-left border border-dark border-2 border-opacity-100 modal-content"> 
+                
+                <div class="modal-header card-header bg-success bg-opacity-100">
+                <input class="form-control border border-dark border-2 border-opacity-100" type="text" name="name" id="name" placeholder="Haзвa справи" required>
+                </div>
+
+                <div class="modal-body card-body bg-success bg-opacity-50">
+                <textarea class="form-control border border-dark border-2 border-opacity-100" name="description" id="description" placeholder="Опис..."></textarea>
+                <input class="form-control mt-2 border border-dark border-2 border-opacity-100" type="date" name="deadline" id="deadline" placeholder="Дедлайн">
+                </div>
+
+                <div class="modal-footer card-footer bg-success bg-opacity-100">
+                <input class="btn btn-success border border-dark border-2 border-opacity-100" type="submit" value="Створити">
+                <button type="button" class="btn btn-danger border border-dark border-2 border-opacity-100" data-bs-dismiss="modal">Закрити</button>
+                </div>
+
+            </form>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="row gx-3 mb-3"> 
+                <% for(let i = 0;  i < data.length; i++) { %>
+                    <% if(i%2==0) { %>
+                         </div><div class="row gx-3 mb-3">
+                    <% } %>
+                    <%if (!data[i].if_delete) { %>
+                        <%if (data[i].if_ok) { %>
+                            <div class="col-6">
+                                <% let date = new Date(data[i].deadline) %>
+                                <div class="card text-left border-dark border-5 border-opacity-100">
+                                    <div class="card-header bg-success bg-opacity-50">
+                                        <h4 class="col text-center">✔ <%= data[i].name %></h4>
+                                        <%if (date.getFullYear() != 1970) { %>
+                                        <h6 class="col text-left">Дедлайн <%= date.getDate() %>.<%= date.getMonth() %>.<%= date.getFullYear() %></h6> 
+                                        <% } %>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text"><%= data[i].description %></p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <form class="col--6" action="/task_delete/<%= data[i]._id %>"> <button class="btn btn-outline-danger w-100" type="submit">Видалити</button></form> </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } else { %>
+                                <div class="col-6">
+                                    <% let date = new Date(data[i].deadline) %>
+                                        <div class="card text-left border-dark border-5 border-opacity-100">
+                                            <div class="card-header bg-info bg-opacity-25">
+                                                <h4 class="col text-center"><%= data[i].name %></h4>
+                                                <%if (date.getFullYear() != 1970) { %>
+                                                    <h6 class="col text-left">Дeдлайн <%= date.getDate() %>.<%= date.getMonth()+1 %>.<%= date.getFullYear() %></h6> 
+                                                <% } %>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="card-text"><%= data[i].description %></p>
+                                            </div>
+                                            <div class="card-footer">
+                                                <div class="row">
+                                                
+                                                <form class="col-6" action="/task_ok/<%= data[i]._id %>"><button class="btn btn-outline-success w-100" type="submit">Bиконати</button></form> 
+                                                <form class="col-6" action="/task_delete/<%= data[i]._id %>"> <button class="btn btn-outline-danger w-100" type="submit">Видалити</button></form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="staticBackdrop<%=i%>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 
+                                    <div class="modal-dialog">
+                                    <form action="update" method="post" class="card text-left border border-primary border-4 border-opacity-50 modal-content"> 
+                                        <input type="hidden" name="id" value="<%= data[i]._id %>">
+                                        <div class="modal-header card-header bg-primary bg-opacity-50">
+                                        <input class="form-control" type="text" name="name" id="name" value="<%= data[i].name %>" placeholder="Haзвa ToDo" required>
+                                        </div>
+                        
+                                        <div class="modal-body card-body">
+                                        <textarea class="form-control" name="description" id="description" placeholder="Подробиці"><%= data[i].description %></textarea>
+                                        <input class="form-control mt-2" type="date" name="deadline" id="deadline">
+                                        <h6>*якщо нову дату не було вказано, вона не оновлюється</h6>
+                                        </div>
+                        
+                                        <div class="modal-footer card-footer">
+                                        <input class="btn btn-outline-success" type="submit" value="Редагувати">
+                                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрити</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        <% } %>
+                        <% if(i==data.length-1) { %>
+                            </div>
+                        <% } %>
+                    <%} else {%>
+                        <div class="col-6">
+                            <% let date = new Date(data[i].deadline) %>
+                            <div class="card text-left border-dark border-5 border-opacity-100">
+                                <div class="card-header bg-danger bg-opacity-50">
+                                    <h4 class="col text-center">✖ <%= data[i].name %></h4>
+                                    <%if (date.getFullYear() != 1970) { %>
+                                        <h6 class="col text-left">Дедлайн <%= date.getDate() %>.<%= date.getMonth() %>.<%= date.getFullYear() %></h6> 
+                                    <% } %>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><%= data[i].description %></p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }%>
+                <%} %>
+            </div>
+    </body>
+</html>
